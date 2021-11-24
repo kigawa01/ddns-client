@@ -17,11 +17,6 @@ public class DDNSClient {
     private final IpTimer ipTimer;
     private URL checkIp;
 
-    public DDNSClient() {
-        ipFile = new IpFile(this);
-        ipTimer = new IpTimer(ipFile, this);
-    }
-
     public static void main(String[] args) {
         ddnsClient = new DDNSClient();
         boolean log = true;
@@ -33,6 +28,11 @@ public class DDNSClient {
             if (arg.equals("f")) out = true;
         }
         logger = new Logger(out, log);
+    }
+
+    public DDNSClient() {
+        ipFile = new IpFile(this);
+        ipTimer = new IpTimer(ipFile, this);
     }
 
     private void newURL(int count) {
@@ -58,5 +58,10 @@ public class DDNSClient {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public void updateIp(){
+        logger.info("update ip...");
+
     }
 }
