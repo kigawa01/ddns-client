@@ -12,6 +12,7 @@ public class DDNSClient {
     public static final File current = Paths.get("").toAbsolutePath().toFile();
     public static final File ownIp = new File(current, "ownIp");
     public static DDNSClient ddnsClient;
+    public static Logger logger;
     private final IpFile ipFile;
     private URL checkIp;
 
@@ -21,7 +22,15 @@ public class DDNSClient {
 
     public static void main(String[] args) {
         ddnsClient = new DDNSClient();
-
+        boolean log = true;
+        boolean out = false;
+        int index = 0;
+        String arg = args[index];
+        if (arg.startsWith("-")) {
+            if (arg.contains("t")) log = false;
+            if (arg.equals("f")) out = true;
+        }
+        logger = new Logger(out, log);
     }
 
     private void newURL(int count) {
