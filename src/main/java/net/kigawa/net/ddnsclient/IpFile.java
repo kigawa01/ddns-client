@@ -12,6 +12,7 @@ public class IpFile {
     }
 
     public String readFile() {
+        DDNSClient.logger.info("read file...");
         try {
             BufferedReader br = new BufferedReader(new FileReader(ownIp));
             String ip = br.readLine();

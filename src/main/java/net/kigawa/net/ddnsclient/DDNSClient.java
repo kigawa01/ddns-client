@@ -14,10 +14,12 @@ public class DDNSClient {
     public static DDNSClient ddnsClient;
     public static Logger logger;
     private final IpFile ipFile;
+    private final IpTimer ipTimer;
     private URL checkIp;
 
     public DDNSClient() {
         ipFile = new IpFile(this);
+        ipTimer = new IpTimer(ipFile, this);
     }
 
     public static void main(String[] args) {
@@ -34,6 +36,7 @@ public class DDNSClient {
     }
 
     private void newURL(int count) {
+        logger.info("create url...");
         if (count > 5) return;
         try {
             checkIp = new URL("http://checkip.amazonaws.com");
@@ -44,6 +47,7 @@ public class DDNSClient {
     }
 
     public String getIp() {
+        logger.info("get own ip...");
         try {
             newURL(0);
             BufferedReader br = new BufferedReader(new InputStreamReader(checkIp.openStream()));
