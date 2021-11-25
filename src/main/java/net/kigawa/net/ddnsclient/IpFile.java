@@ -12,7 +12,6 @@ public class IpFile {
     }
 
     public String readFile() {
-        DDNSClient.logger.info("read file...");
         try {
             BufferedReader br = new BufferedReader(new FileReader(ownIp));
             String ip = br.readLine();
@@ -26,10 +25,18 @@ public class IpFile {
         return null;
     }
 
-    public void createFile() {
-        if (ownIp.exists()) return;
+    public void writeIp(String ip) {
         try {
-            ownIp.createNewFile();
+            FileWriter fileWriter = new FileWriter(ownIp);
+            fileWriter.write(ip);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createFile() {
+        try {
+            if (!ownIp.exists()) ownIp.createNewFile();
 
             FileWriter fileWriter = new FileWriter(ownIp);
             fileWriter.write(ddnsClient.getIp());

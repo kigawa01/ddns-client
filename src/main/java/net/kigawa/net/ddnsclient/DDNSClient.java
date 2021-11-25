@@ -17,7 +17,7 @@ public class DDNSClient {
     public static final File config = new File(current, "config.yml");
     public static DDNSClient ddnsClient;
     public static Logger logger;
-    public static boolean isEnd;
+    public static boolean isEnd = true;
     private final IpFile ipFile;
     private final IpTimer ipTimer;
     private final Yaml yaml;
@@ -26,29 +26,41 @@ public class DDNSClient {
     private Cloudflare cloudflare;
 
     public DDNSClient() {
+        logger.info("start DDNSClient");
         ipFile = new IpFile(this);
         ipTimer = new IpTimer(ipFile, this);
         yaml = new Yaml(Util.getAbsolutFile(), DDNSClient.logger);
+        logger.info("load data...");
         data = yaml.load(ConfigData.class, config);
         if (data == null) {
             data = new ConfigData();
             yaml.save(data);
         }
+        logger.info("new cloudflare...");
         cloudflare = new Cloudflare(data.getZoneId(), data.getId(), data.getEMail(), data.getKey());
+
+        logger.info("start timer");
+        ipTimer.start();
     }
 
     public static void main(String[] args) {
         boolean log = true;
         boolean debug = false;
         int index = 0;
-        String arg = args[index];
-        if (arg.startsWith("-")) {
-            if (arg.contains("t")) log = false;
-            if (arg.contains("d")) debug = true;
-        }
-        logger = new Logger(log, debug);
-        ddnsClient = new DDNSClient();
 
+        if (args.length > index) {
+            String arg = args[index];
+            if (arg.startsWith("-")) {
+                if (arg.contains("t")) log = false;
+                if (arg.contains("d")) debug = true;
+                index++;
+            }
+        }
+
+        System.out.println("new logger");
+        logger = new Logger(log, debug);
+        logger.info("new DDNSClient");
+        ddnsClient = new DDNSClient();
         Scanner scanner = new Scanner(System.in);
         while (isEnd) {
             scanner(scanner);
@@ -58,8 +70,11 @@ public class DDNSClient {
     public static void scanner(Scanner scanner) {
         String command = scanner.next();
         if (command.equals("stop") | command.equals("end")) {
-            isEnd = true;
+            isEnd = false;
             ddnsClient.end();
+        }
+        if (command.equals("test")) {
+            ddnsClient.getCloudflare().updateIp(ddnsClient.getData().getDomain(), ddnsClient.getIp());
         }
     }
 
@@ -68,7 +83,6 @@ public class DDNSClient {
     }
 
     public void newURL(int count) {
-        logger.info("create url...");
         if (count > 5) return;
         try {
             checkIp = new URL("http://checkip.amazonaws.com");
@@ -87,7 +101,6 @@ public class DDNSClient {
     }
 
     public String getIp() {
-        logger.info("get own ip...");
         try {
             newURL(0);
             BufferedReader br = new BufferedReader(new InputStreamReader(checkIp.openStream()));

@@ -11,7 +11,7 @@ public class Util {
 
     public static String getDate() {
         Calendar calendar = Calendar.getInstance();
-        StringBuffer sb = new StringBuffer(calendar.get(Calendar.YEAR));
+        StringBuffer sb = new StringBuffer().append(calendar.get(Calendar.YEAR));
         sb.append("-").append(calendar.get(Calendar.MONTH));
         sb.append("-").append(calendar.get(Calendar.DAY_OF_MONTH));
         return sb.toString();

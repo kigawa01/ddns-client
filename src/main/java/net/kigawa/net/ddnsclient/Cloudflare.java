@@ -23,9 +23,10 @@ public class Cloudflare {
 
     public void updateIp(String domain, String ip) {
         DDNSClient.logger.info("update ip...");
+        HttpURLConnection urCon = null;
         try {
             URL url = new URL("https://api.cloudflare.com/client/v4/zones/" + zoneId + "/dns_records/" + id);
-            HttpURLConnection urCon = (HttpURLConnection) url.openConnection();
+            urCon = (HttpURLConnection) url.openConnection();
             urCon.setRequestMethod("PUT");
             urCon.setDoOutput(true);
             urCon.setRequestProperty("X-Auth-Email", eMail);
@@ -35,19 +36,36 @@ public class Cloudflare {
             DDNSClient.logger.info("connecting...");
             urCon.connect();
 
-            PrintStream ps = new PrintStream(urCon.getOutputStream());
-            ps.print("{\"type\":\"A\",\"name\":\"" + domain + "\",\"content\":\"" + ip + "\",\"ttl\":3600,\"proxied\":false}");
-            ps.close();
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(urCon.getInputStream()));
-            String out;
-            while ((out = br.readLine()) != null) {
-                DDNSClient.logger.info("out");
-            }
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        try {
+            DDNSClient.logger.info("send data...");
+            PrintStream ps = new PrintStream(urCon.getOutputStream());
+            ps.print("{\"type\":\"A\",\"name\":\"" + domain + "\",\"content\":\"" + ip + "\",\"ttl\":3600,\"proxied\":false}");
+            ps.close();
+
+            DDNSClient.logger.info("output log...");
+            BufferedReader br = new BufferedReader(new InputStreamReader(urCon.getInputStream()));
+            String out;
+            while ((out = br.readLine()) != null) {
+                DDNSClient.logger.info(out);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            BufferedReader br = new BufferedReader(new InputStreamReader(urCon.getErrorStream()));
+            String out;
+            try {
+                while ((out = br.readLine()) != null) {
+
+                    DDNSClient.logger.info(out);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }

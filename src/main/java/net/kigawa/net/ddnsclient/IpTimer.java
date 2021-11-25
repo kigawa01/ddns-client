@@ -20,14 +20,30 @@ public class IpTimer extends Thread {
 
     @Override
     public void run() {
-        if (!isRun) return;
+        if (!isRun) {
+            return;
+        }
         try {
-            sleep(30000);
+            sleep(1000 * 30);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         String ip = ddnsClient.getIp();
-        if (ipFile.readFile().equals(ip)) run();
+        if (ipFile == null) {
+            run();
+            return;
+        }
+        String readIp = ipFile.readFile();
+        if (readIp == null) {
+            run();
+            return;
+        }
+        if (readIp.equals(ip)) {
+            run();
+            return;
+        }
         ddnsClient.getCloudflare().updateIp(ddnsClient.getData().getDomain(), ip);
+        ipFile.writeIp(ip);
+        run();
     }
 }

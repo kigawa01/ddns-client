@@ -13,12 +13,15 @@ public class Logger implements net.kigawa.util.Logger {
     }
 
     public Logger(File dir,  boolean log, boolean debug) {
+        System.out.println("on logger");
         isLog = log;
         isDebug = debug;
 
         if (!log) return;
+        System.out.println("if log");
         this.log = createLogFile(dir);
         try {
+            System.out.println("get reader...");
             bw = new BufferedWriter(new FileWriter(this.log));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -32,7 +35,7 @@ public class Logger implements net.kigawa.util.Logger {
         File log;
         do {
             StringBuffer name = new StringBuffer(Util.getDate());
-            if (num < 0) name.append("-").append(num);
+            if (num >= 0) name.append("-").append(num);
             log = new File(dir, name.toString());
             num++;
         } while (log.exists());
