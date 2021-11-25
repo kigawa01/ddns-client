@@ -10,6 +10,9 @@ public class IpTimer extends Thread {
         this.ddnsClient = ddnsClient;
     }
 
+    public void end() {
+        isRun = false;
+    }
 
     public void setRun(boolean run) {
         this.isRun = run;

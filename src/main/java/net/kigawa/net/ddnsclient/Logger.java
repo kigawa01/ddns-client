@@ -4,18 +4,16 @@ import java.io.*;
 
 public class Logger implements net.kigawa.util.Logger {
     private File log;
-    private final boolean isOut;
     private final boolean isLog;
     private final boolean isDebug;
     private BufferedWriter bw;
 
-    public Logger(boolean out, boolean log, boolean debug) {
-        this(Util.getAbsolutFile(), out, log, debug);
+    public Logger( boolean log, boolean debug) {
+        this(Util.getAbsolutFile(), log, debug);
     }
 
-    public Logger(File dir, boolean out, boolean log, boolean debug) {
+    public Logger(File dir,  boolean log, boolean debug) {
         isLog = log;
-        isOut = out;
         isDebug = debug;
 
         if (!log) return;
@@ -65,7 +63,7 @@ public class Logger implements net.kigawa.util.Logger {
     public void log(Object o) {
         StringBuffer sb = new StringBuffer(Util.getTime());
         sb.append(" | ").append(o);
-        if (isOut) System.out.println(sb);
+        System.out.println(sb);
         if (isLog) writeLine(o);
     }
 

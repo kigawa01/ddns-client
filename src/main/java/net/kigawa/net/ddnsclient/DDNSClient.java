@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Scanner;
 
 public class DDNSClient {
     public static final File current = Paths.get("").toAbsolutePath().toFile();
@@ -16,6 +17,7 @@ public class DDNSClient {
     public static final File config = new File(current, "config.yml");
     public static DDNSClient ddnsClient;
     public static Logger logger;
+    public static boolean isEnd;
     private final IpFile ipFile;
     private final IpTimer ipTimer;
     private final Yaml yaml;
@@ -37,20 +39,35 @@ public class DDNSClient {
 
     public static void main(String[] args) {
         boolean log = true;
-        boolean out = false;
         boolean debug = false;
         int index = 0;
         String arg = args[index];
         if (arg.startsWith("-")) {
             if (arg.contains("t")) log = false;
-            if (arg.contains("f")) out = true;
             if (arg.contains("d")) debug = true;
         }
-        logger = new Logger(out, log, debug);
+        logger = new Logger(log, debug);
         ddnsClient = new DDNSClient();
+
+        Scanner scanner = new Scanner(System.in);
+        while (isEnd) {
+            scanner(scanner);
+        }
     }
 
-    private void newURL(int count) {
+    public static void scanner(Scanner scanner) {
+        String command = scanner.next();
+        if (command.equals("stop") | command.equals("end")) {
+            isEnd = true;
+            ddnsClient.end();
+        }
+    }
+
+    public void end() {
+        ipTimer.end();
+    }
+
+    public void newURL(int count) {
         logger.info("create url...");
         if (count > 5) return;
         try {
