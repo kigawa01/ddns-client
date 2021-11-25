@@ -25,6 +25,6 @@ public class IpTimer extends Thread {
         }
         String ip = ddnsClient.getIp();
         if (ipFile.readFile().equals(ip)) run();
-
+        ddnsClient.getCloudflare().updateIp(ddnsClient.getData().getDomain(), ip);
     }
 }

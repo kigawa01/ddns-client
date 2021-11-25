@@ -56,6 +56,11 @@
             <artifactId>Util</artifactId>
             <version>1.0dev</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.kigawa8390</groupId>
+            <artifactId>YamlUtil</artifactId>
+            <version>1.0dev</version>
+        </dependency>
     </dependencies>
 
 </project>

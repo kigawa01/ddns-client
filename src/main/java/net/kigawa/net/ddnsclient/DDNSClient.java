@@ -1,5 +1,7 @@
 package net.kigawa.net.ddnsclient;
 
+import net.kigawa.yamlutil.Yaml;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -11,28 +13,41 @@ import java.nio.file.Paths;
 public class DDNSClient {
     public static final File current = Paths.get("").toAbsolutePath().toFile();
     public static final File ownIp = new File(current, "ownIp");
+    public static final File config = new File(current, "config.yml");
     public static DDNSClient ddnsClient;
     public static Logger logger;
     private final IpFile ipFile;
     private final IpTimer ipTimer;
+    private final Yaml yaml;
+    private ConfigData data;
     private URL checkIp;
-
-    public static void main(String[] args) {
-        ddnsClient = new DDNSClient();
-        boolean log = true;
-        boolean out = false;
-        int index = 0;
-        String arg = args[index];
-        if (arg.startsWith("-")) {
-            if (arg.contains("t")) log = false;
-            if (arg.equals("f")) out = true;
-        }
-        logger = new Logger(out, log);
-    }
+    private Cloudflare cloudflare;
 
     public DDNSClient() {
         ipFile = new IpFile(this);
         ipTimer = new IpTimer(ipFile, this);
+        yaml = new Yaml(Util.getAbsolutFile(), DDNSClient.logger);
+        data = yaml.load(ConfigData.class, config);
+        if (data == null) {
+            data = new ConfigData();
+            yaml.save(data);
+        }
+        cloudflare = new Cloudflare(data.getZoneId(), data.getId(), data.getEMail(), data.getKey());
+    }
+
+    public static void main(String[] args) {
+        boolean log = true;
+        boolean out = false;
+        boolean debug = false;
+        int index = 0;
+        String arg = args[index];
+        if (arg.startsWith("-")) {
+            if (arg.contains("t")) log = false;
+            if (arg.contains("f")) out = true;
+            if (arg.contains("d")) debug = true;
+        }
+        logger = new Logger(out, log, debug);
+        ddnsClient = new DDNSClient();
     }
 
     private void newURL(int count) {
@@ -44,6 +59,14 @@ public class DDNSClient {
             e.printStackTrace();
             newURL(count + 1);
         }
+    }
+
+    public ConfigData getData() {
+        return data;
+    }
+
+    public Cloudflare getCloudflare() {
+        return cloudflare;
     }
 
     public String getIp() {

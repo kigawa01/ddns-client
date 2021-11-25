@@ -2,21 +2,21 @@ package net.kigawa.net.ddnsclient;
 
 import java.io.*;
 
-public class Logger {
-    private File dir;
+public class Logger implements net.kigawa.util.Logger {
     private File log;
-    private boolean isOut;
-    private boolean isLog;
+    private final boolean isOut;
+    private final boolean isLog;
+    private final boolean isDebug;
     private BufferedWriter bw;
 
-    public Logger(boolean out, boolean log) {
-        this(Util.getAbsolutFile(), out, log);
+    public Logger(boolean out, boolean log, boolean debug) {
+        this(Util.getAbsolutFile(), out, log, debug);
     }
 
-    public Logger(File dir, boolean out, boolean log) {
-        this.dir = dir;
+    public Logger(File dir, boolean out, boolean log, boolean debug) {
         isLog = log;
         isOut = out;
+        isDebug = debug;
 
         if (!log) return;
         this.log = createLogFile(dir);
@@ -50,8 +50,14 @@ public class Logger {
         }
     }
 
+    public void debug(Object o) {
+        if (!isDebug) return;
+        StringBuffer sb = new StringBuffer("[DEBUG] ").append(o);
+        log(o);
+    }
+
     public void info(Object o) {
-        StringBuffer sb = new StringBuffer("[").append("INFO").append("] ");
+        StringBuffer sb = new StringBuffer("[INFO] ");
         sb.append(o);
         log(sb);
     }
@@ -61,5 +67,10 @@ public class Logger {
         sb.append(" | ").append(o);
         if (isOut) System.out.println(sb);
         if (isLog) writeLine(o);
+    }
+
+    @Override
+    public void logger(String message) {
+        debug(message);
     }
 }
