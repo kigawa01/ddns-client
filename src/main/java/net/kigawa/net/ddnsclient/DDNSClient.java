@@ -70,18 +70,14 @@ public class DDNSClient {
         ddnsClient = new DDNSClient();
         Scanner scanner = new Scanner(System.in);
         while (isEnd) {
-            scanner(scanner);
+            if (scanner(scanner)) continue;
+            break;
         }
     }
 
-    public static synchronized void scanner(Scanner scanner) {
+    public static synchronized boolean scanner(Scanner scanner) {
         if (!(scanner != null && scanner.hasNext())) {
-            try {
-                Thread.currentThread().wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return;
+            return false;
         }
         String command = scanner.next();
         if (command.equals("stop") | command.equals("end")) {
@@ -91,6 +87,7 @@ public class DDNSClient {
         if (command.equals("test")) {
             ddnsClient.getCloudflare().updateIp(ddnsClient.getData().getDomain(), ddnsClient.getIp());
         }
+        return true;
     }
 
     public void end() {
