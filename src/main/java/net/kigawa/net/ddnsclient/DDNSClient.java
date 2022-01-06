@@ -75,7 +75,7 @@ public class DDNSClient {
     }
 
     public static synchronized void scanner(Scanner scanner) {
-        if (scanner == null) {
+        if (!(scanner != null && scanner.hasNext())) {
             try {
                 Thread.currentThread().wait();
             } catch (InterruptedException e) {
