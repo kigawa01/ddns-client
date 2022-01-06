@@ -17,7 +17,7 @@ public class DDNSClient {
     public static final File current = Paths.get("").toAbsolutePath().toFile();
     public static final File ownIp = new File(current, "ownIp");
     public static final File config = new File(current, "config.yml");
-    private static final Logger logger;
+    public static final Logger logger;
     public static DDNSClient ddnsClient;
     public static boolean isEnd = true;
     private final IpFile ipFile;
@@ -65,7 +65,6 @@ public class DDNSClient {
         }
 
 
-        logger.info("start DDNSClient");
         ddnsClient = new DDNSClient();
         Scanner scanner = new Scanner(System.in);
         while (isEnd) {
