@@ -1,5 +1,6 @@
 package net.kigawa.net.ddnsclient;
 
+import net.kigawa.util.Formatter;
 import net.kigawa.util.Logger;
 import net.kigawa.yamlutil.Yaml;
 
@@ -28,6 +29,7 @@ public class DDNSClient {
     private Cloudflare cloudflare;
 
     static {
+        java.util.logging.Logger.getLogger("").getHandlers()[0].setFormatter(new Formatter());
         Logger.enable(DDNSClient.class.getName(), null, Level.INFO, Paths.get("").toAbsolutePath().toFile());
         logger = Logger.getInstance();
     }
@@ -73,9 +75,9 @@ public class DDNSClient {
     }
 
     public static synchronized void scanner(Scanner scanner) {
-        if (!scanner.hasNext()) {
+        if (scanner == null) {
             try {
-                Thread.currentThread().wait(30000);
+                Thread.currentThread().wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
