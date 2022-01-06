@@ -72,7 +72,15 @@ public class DDNSClient {
         }
     }
 
-    public static void scanner(Scanner scanner) {
+    public static synchronized void scanner(Scanner scanner) {
+        if (!scanner.hasNext()) {
+            try {
+                Thread.currentThread().wait(30000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
         String command = scanner.next();
         if (command.equals("stop") | command.equals("end")) {
             isEnd = false;
