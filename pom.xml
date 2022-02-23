@@ -6,7 +6,7 @@
 
     <groupId>net.kigawa.net</groupId>
     <artifactId>ddns-client</artifactId>
-    <version>3.15dev</version>
+    <version>3.15b</version>
 
     <build>
         <plugins>
