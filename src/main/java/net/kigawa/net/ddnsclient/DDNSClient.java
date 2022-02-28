@@ -21,7 +21,7 @@ public class DDNSClient extends Application {
     public static final File config = FileUtil.getRelativeFile("config.yml");
     public static final File logDir = FileUtil.getRelativeFile("logs");
     public static Level log = Level.INFO;
-    public static boolean debug = false;
+    public static boolean jline = false;
     public static DDNSClient ddnsClient;
     public static Logger logger;
 
@@ -36,7 +36,7 @@ public class DDNSClient extends Application {
         logger = new Logger(DDNSClient.class.getName(), null, Level.INFO, logDir);
         addModule(logger);
         addModule(new ThreadExecutors(logger));
-        addModule(new Terminal(true, logger));
+        addModule(new Terminal(jline, logger));
 
         ipFile = new IpFile(this);
         ipTimer = new IpTimer(ipFile, this);
@@ -48,19 +48,37 @@ public class DDNSClient extends Application {
     }
 
     public static void main(String[] args) {
-        int index = 0;
+        for (String arg : args) {
 
-        while (args.length > index) {
-            String arg = args[index];
+            if (arg.startsWith("--")) {
+                switch (arg.substring(2)) {
+                    case "no-jline":
+                        jline = false;
+                        break;
+                }
+                continue;
+            }
+
             if (arg.startsWith("-")) {
                 if (arg.contains("d")) log = Level.FINE;
-                index++;
+                continue;
             }
         }
 
 
         ddnsClient = new DDNSClient();
         Scanner scanner = new Scanner(System.in);
+    }
+
+    public void command(String str) {
+
+        if (str.equals("stop") | str.equals("end")) {
+            ddnsClient.disable();
+            return;
+        }
+        if (str.equals("test")) {
+            ddnsClient.getCloudflare().updateIp(ddnsClient.getData().getDomain(), ddnsClient.getIp());
+        }
     }
 
     public Cloudflare getCloudflare() {
@@ -113,17 +131,6 @@ public class DDNSClient extends Application {
 
         logger.info("start timer");
         ipTimer.start();
-    }
-
-    public void command(String str) {
-
-        if (str.equals("stop") | str.equals("end")) {
-            ddnsClient.disable();
-            return;
-        }
-        if (str.equals("test")) {
-            ddnsClient.getCloudflare().updateIp(ddnsClient.getData().getDomain(), ddnsClient.getIp());
-        }
     }
 
     public void updateIp() {
