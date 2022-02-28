@@ -1,6 +1,11 @@
 package net.kigawa.net.ddnsclient;
 
-public class IpTimer extends Thread {
+import net.kigawa.kutil.kutil.interfaces.Module;
+import net.kigawa.kutil.thread.ThreadExecutor;
+
+import static java.lang.Thread.sleep;
+
+public class IpTimer implements Module {
     private final IpFile ipFile;
     private final DDNSClient ddnsClient;
     private boolean isRun = true;
@@ -10,38 +15,52 @@ public class IpTimer extends Thread {
         this.ddnsClient = ddnsClient;
     }
 
+    @Override
+    public void enable() {
+        DDNSClient.logger.info("enable ip timer");
+        ThreadExecutor.getInstance(DDNSClient.class.getName()).execute(this::run);
+    }
+
+    @Override
+    public void disable() {
+        DDNSClient.logger.info("disable ip timer");
+        end();
+    }
+
     public void end() {
         isRun = false;
     }
 
-    public void setRun(boolean run) {
-        this.isRun = run;
-    }
-
-    @Override
     public void run() {
+        DDNSClient.logger.fine("on run");
         if (!isRun) {
+            DDNSClient.logger.fine("no run");
             return;
         }
         try {
-            sleep(1000 * 30);
+            sleep(1000 * 10);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         String ip = ddnsClient.getIp();
         if (ipFile == null) {
+            DDNSClient.logger.fine("ip file is null");
             run();
             return;
         }
-        String readIp = ipFile.readFile();
+        final String readIp = ipFile.readFile();
         if (readIp == null) {
+            DDNSClient.logger.fine("read ip is null");
             run();
             return;
         }
+        DDNSClient.logger.fine("ip>" + ip, "readIp>" + readIp);
         if (readIp.equals(ip)) {
+            DDNSClient.logger.fine("match ip");
             run();
             return;
         }
+        DDNSClient.logger.fine("no match ip");
         ddnsClient.getCloudflare().updateIp(ddnsClient.getData().getDomain(), ip);
         ipFile.writeIp(ip);
         run();

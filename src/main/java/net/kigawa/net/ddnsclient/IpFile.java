@@ -8,25 +8,17 @@ public class IpFile {
 
     public IpFile(DDNSClient ddnsClient) {
         this.ddnsClient = ddnsClient;
-        createFile();
-    }
-
-    public void createFile() {
-        try {
-            if (!ownIp.exists()) ownIp.createNewFile();
-
-            FileWriter fileWriter = new FileWriter(ownIp);
-            fileWriter.write(ddnsClient.getIp());
-            fileWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public String readFile() {
         try {
+            if (!ownIp.exists()) {
+                writeIp("0");
+            }
+
             BufferedReader br = new BufferedReader(new FileReader(ownIp));
             String ip = br.readLine();
+            DDNSClient.logger.fine("on readFile " + ip);
             br.close();
             return ip;
         } catch (IOException e) {
@@ -37,8 +29,11 @@ public class IpFile {
 
     public void writeIp(String ip) {
         try {
+            if (!ownIp.exists()) ownIp.createNewFile();
+
             FileWriter fileWriter = new FileWriter(ownIp);
             fileWriter.write(ip);
+            fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

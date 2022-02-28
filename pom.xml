@@ -47,12 +47,12 @@
         <dependency>
             <groupId>net.kigawa.kutil</groupId>
             <artifactId>kutil</artifactId>
-            <version>1.1ddns</version>
+            <version>1.0dev</version>
         </dependency>
         <dependency>
             <groupId>net.kigawa.kutil</groupId>
             <artifactId>yaml</artifactId>
-            <version>4.0dev</version>
+            <version>1.0dev</version>
         </dependency>
         <dependency>
             <groupId>net.kigawa.kutil</groupId>
@@ -62,6 +62,11 @@
         <dependency>
             <groupId>net.kigawa.kutil</groupId>
             <artifactId>terminal</artifactId>
+            <version>1.0dev</version>
+        </dependency>
+        <dependency>
+            <groupId>net.kigawa.kutil</groupId>
+            <artifactId>thread</artifactId>
             <version>1.0dev</version>
         </dependency>
         <dependency>

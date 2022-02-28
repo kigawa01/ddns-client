@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Cloudflare {
@@ -37,10 +36,8 @@ public class Cloudflare {
             urCon.connect();
 
 
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            DDNSClient.logger.warning(e);
         }
         try {
             DDNSClient.logger.info("send data...");
