@@ -13,17 +13,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.logging.Level;
 
 public class DDNSClient extends Application {
-    public static final File current = Paths.get("").toAbsolutePath().toFile();
-    public static final File ownIp = new File(current, "ownIp");
-    public static final File config = new File(current, "config.yml");
+    public static final File ownIp = FileUtil.getRelativeFile("ownIp");
+    public static final File config = FileUtil.getRelativeFile("config.yml");
     public static final File logDir = FileUtil.getRelativeFile("logs");
+    public static Level log = Level.INFO;
+    public static boolean debug = false;
     public static DDNSClient ddnsClient;
-    public static boolean isEnd = true;
     public static Logger logger;
 
     private final IpFile ipFile;
@@ -43,19 +42,18 @@ public class DDNSClient extends Application {
         ipTimer = new IpTimer(ipFile, this);
         yaml = new Yaml(Util.getAbsolutFile(), logger);
 
+        Terminal.terminal.addOnRead(this::command);
+
         enable();
     }
 
     public static void main(String[] args) {
-        boolean log = true;
-        boolean debug = false;
         int index = 0;
 
-        if (args.length > index) {
+        while (args.length > index) {
             String arg = args[index];
             if (arg.startsWith("-")) {
-                if (arg.contains("t")) log = false;
-                if (arg.contains("d")) debug = true;
+                if (arg.contains("d")) log = Level.FINE;
                 index++;
             }
         }
@@ -63,29 +61,6 @@ public class DDNSClient extends Application {
 
         ddnsClient = new DDNSClient();
         Scanner scanner = new Scanner(System.in);
-        while (isEnd) {
-            if (scanner(scanner)) continue;
-            break;
-        }
-    }
-
-    public static synchronized boolean scanner(Scanner scanner) {
-        if (!(scanner != null && scanner.hasNext())) {
-            return false;
-        }
-        String command = scanner.next();
-        if (command.equals("stop") | command.equals("end")) {
-            isEnd = false;
-            ddnsClient.end();
-        }
-        if (command.equals("test")) {
-            ddnsClient.getCloudflare().updateIp(ddnsClient.getData().getDomain(), ddnsClient.getIp());
-        }
-        return true;
-    }
-
-    public void end() {
-        ipTimer.end();
     }
 
     public Cloudflare getCloudflare() {
@@ -121,7 +96,7 @@ public class DDNSClient extends Application {
 
     @Override
     protected void onDisable() {
-
+        ipTimer.end();
     }
 
     @Override
@@ -138,6 +113,17 @@ public class DDNSClient extends Application {
 
         logger.info("start timer");
         ipTimer.start();
+    }
+
+    public void command(String str) {
+
+        if (str.equals("stop") | str.equals("end")) {
+            ddnsClient.disable();
+            return;
+        }
+        if (str.equals("test")) {
+            ddnsClient.getCloudflare().updateIp(ddnsClient.getData().getDomain(), ddnsClient.getIp());
+        }
     }
 
     public void updateIp() {
