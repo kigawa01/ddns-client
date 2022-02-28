@@ -2,6 +2,7 @@ package net.kigawa.net.ddnsclient;
 
 import net.kigawa.kutil.kutil.app.Application;
 import net.kigawa.kutil.kutil.file.FileUtil;
+import net.kigawa.kutil.kutil.thread.ThreadExecutors;
 import net.kigawa.kutil.log.log.Logger;
 import net.kigawa.kutil.terminal.Terminal;
 import net.kigawa.yamlutil.Yaml;
@@ -35,6 +36,7 @@ public class DDNSClient extends Application {
     public DDNSClient() {
         logger = new Logger(DDNSClient.class.getName(), null, Level.INFO, logDir);
         addModule(logger);
+        addModule(new ThreadExecutors(logger));
         addModule(new Terminal(true, logger));
 
         ipFile = new IpFile(this);
