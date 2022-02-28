@@ -43,23 +43,26 @@
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
-            <groupId>net.kigawa</groupId>
-            <artifactId>util</artifactId>
-            <version>3.14dev</version>
+            <groupId>net.kigawa.kutil</groupId>
+            <artifactId>kutil</artifactId>
+            <version>1.1ddns</version>
         </dependency>
         <dependency>
-            <groupId>net.kigawa</groupId>
-            <artifactId>yaml-util</artifactId>
-            <version>3.15dev</version>
+            <groupId>net.kigawa.kutil</groupId>
+            <artifactId>yaml</artifactId>
+            <version>4.0dev</version>
+        </dependency>
+        <dependency>
+            <groupId>net.kigawa.kutil</groupId>
+            <artifactId>log</artifactId>
+            <version>1.0dev</version>
+        </dependency>
+        <dependency>
+            <groupId>net.kigawa.kutil</groupId>
+            <artifactId>terminal</artifactId>
+            <version>1.0dev</version>
         </dependency>
     </dependencies>
 
