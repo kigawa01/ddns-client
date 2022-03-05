@@ -8,6 +8,24 @@ public class ConfigData extends YamlData {
     String eMail;
     String key;
     String domain;
+    boolean secret=false;
+    String secretPath;
+
+    public void setSecretPath(String secretPath) {
+        this.secretPath = secretPath;
+    }
+
+    public String getSecretPath() {
+        return secretPath;
+    }
+
+    public void setSecret(boolean secret) {
+        this.secret = secret;
+    }
+
+    public boolean isSecret() {
+        return secret;
+    }
 
     public void setDomain(String domain) {
         this.domain = domain;

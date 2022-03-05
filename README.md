@@ -1,4 +1,4 @@
-# DDNSClient
+# ddns-client
 
 DDNSのクライアント
 
@@ -16,7 +16,7 @@ DDNSのクライアント
 * 手動でAレコードを更新した場合不具合が発生する場合があります
 * 対応DDNS
   * cloudflare
-* 現在はcloudflareのAレコードの更新のみ対応している
+* 現在はcloudflareのAレコードの更新のみ対応
 
 ## Command
 
@@ -27,7 +27,7 @@ DDNSのクライアント
 
 ## Config
 
-* EMail
+* Email
   * 認証に使用するEmail
 * domain
   * 更新するドメイン
@@ -39,6 +39,10 @@ DDNSのクライアント
   * 内部的なもの
 * zoneId
   * zoneId
+* secret
+  * tokenをファイルから読み込む
+* secretPath
+  * ファイルのパス
 
 ## Change
 
@@ -58,7 +62,6 @@ DDNSのクライアント
 
 ## TODO
 
-* [ ] Loggerを改善する
 
 ## sample
 
