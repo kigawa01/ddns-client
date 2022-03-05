@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class DDNSClient extends Application {
@@ -23,6 +24,7 @@ public class DDNSClient extends Application {
     public static final File logDir = FileUtil.getRelativeFile("logs");
     public static Level log = Level.INFO;
     public static boolean jline = false;
+    public static boolean docker = false;
     public static DDNSClient ddnsClient;
     public static Logger logger;
 
@@ -35,8 +37,8 @@ public class DDNSClient extends Application {
         logger = new Logger(DDNSClient.class.getName(), null, log, logDir);
         addModule(logger);
         addModule(new ThreadExecutors(logger));
-        addModule(new Terminal(jline, logger));
         addModule(new ThreadExecutor(DDNSClient.class.getName(), logger));
+        addModule(new Terminal(jline, logger));
 
         IpFile ipFile = new IpFile(this);
         addModule(new IpTimer(ipFile, this));
@@ -57,6 +59,9 @@ public class DDNSClient extends Application {
                         System.out.println("not use jline");
                         jline = false;
                         break;
+                    case "load-env":
+                        docker = true;
+                        break;
                 }
                 continue;
             }
@@ -72,8 +77,8 @@ public class DDNSClient extends Application {
 
 
         ddnsClient = new DDNSClient();
-        Scanner scanner = new Scanner(System.in);
     }
+
 
     public void command(String str) {
 
@@ -132,7 +137,23 @@ public class DDNSClient extends Application {
             data = new ConfigData();
             yaml.save(data);
         }
+        if (docker) loadEnv();
         logger.info("new cloudflare...");
         cloudflare = new Cloudflare(data.getZoneId(), data.getId(), data.getEMail(), data.getKey());
+    }
+
+    private void loadEnv() {
+        loadEnv("EMAIL", data::setEMail);
+        loadEnv("DOMAIN", data::setDomain);
+        loadEnv("ID", data::setId);
+        loadEnv("KEY", data::setKey);
+        loadEnv("ZONE_ID", data::setZoneId);
+
+        yaml.save(data);
+    }
+
+    private void loadEnv(String path, Consumer<String> consumer) {
+        var var = System.getenv(path);
+        consumer.accept(var);
     }
 }
