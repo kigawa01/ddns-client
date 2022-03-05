@@ -8,10 +8,7 @@ import net.kigawa.kutil.terminal.Terminal;
 import net.kigawa.kutil.thread.ThreadExecutor;
 import net.kigawa.yamlutil.Yaml;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.function.Consumer;
@@ -23,7 +20,6 @@ public class DDNSClient extends Application {
     public static final File logDir = FileUtil.getRelativeFile("logs");
     public static Level log = Level.INFO;
     public static boolean jline = false;
-    public static boolean docker = false;
     public static DDNSClient ddnsClient;
     public static Logger logger;
 
@@ -57,9 +53,6 @@ public class DDNSClient extends Application {
                     case "no-jline":
                         System.out.println("not use jline");
                         jline = false;
-                        break;
-                    case "load-env":
-                        docker = true;
                         break;
                 }
                 continue;
@@ -136,23 +129,17 @@ public class DDNSClient extends Application {
             data = new ConfigData();
             yaml.save(data);
         }
-        if (docker) loadEnv();
-        logger.info("new cloudflare...");
-        cloudflare = new Cloudflare(data.getZoneId(), data.getId(), data.getEMail(), data.getKey());
-    }
-
-    private void loadEnv() {
-        loadEnv("EMAIL", data::setEMail);
-        loadEnv("DOMAIN", data::setDomain);
-        loadEnv("ID", data::setId);
-        loadEnv("KEY", data::setKey);
-        loadEnv("ZONE_ID", data::setZoneId);
-
-        yaml.save(data);
-    }
-
-    private void loadEnv(String path, Consumer<String> consumer) {
-        var var = System.getenv(path);
-        consumer.accept(var);
+        logger.fine("new cloudflare...");
+        if (data.isSecret()) {
+            var tokenFile = new File(data.getSecretPath());
+            String token = "";
+            try {
+                tokenFile.createNewFile();
+                token = new BufferedReader(new InputStreamReader(new FileInputStream(tokenFile))).readLine();
+            } catch (IOException e) {
+                DDNSClient.logger.warning(e);
+            }
+            cloudflare = new Cloudflare(data.getZoneId(), data.getId(), data.getEMail(), token);
+        } else cloudflare = new Cloudflare(data.getZoneId(), data.getId(), data.getEMail(), data.getKey());
     }
 }
