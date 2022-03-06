@@ -1,4 +1,4 @@
-package net.kigawa.net.ddnsclient;
+package net.kigawa.ddnsclient;
 
 import java.io.BufferedReader;
 import java.io.IOException;

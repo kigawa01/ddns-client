@@ -1,4 +1,4 @@
-package net.kigawa.net.ddnsclient;
+package net.kigawa.ddnsclient;
 
 import net.kigawa.yamlutil.YamlData;
 

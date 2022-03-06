@@ -1,4 +1,4 @@
-package net.kigawa.net.ddnsclient;
+package net.kigawa.ddnsclient;
 
 import net.kigawa.kutil.kutil.app.Application;
 import net.kigawa.kutil.kutil.file.FileUtil;
@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 

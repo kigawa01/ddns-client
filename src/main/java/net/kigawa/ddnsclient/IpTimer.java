@@ -1,4 +1,4 @@
-package net.kigawa.net.ddnsclient;
+package net.kigawa.ddnsclient;
 
 import net.kigawa.kutil.kutil.interfaces.Module;
 import net.kigawa.kutil.thread.ThreadExecutor;

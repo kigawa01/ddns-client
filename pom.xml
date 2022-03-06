@@ -21,7 +21,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>net.kigawa.net.ddnsclient.DDNSClient</mainClass>
+                            <mainClass>net.kigawa.ddnsclient.DDNSClient</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
